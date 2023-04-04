@@ -1,0 +1,231 @@
+{
+  "syntax": "proto3",
+  "root": {
+    "options": {
+      "csharp_namespace": "DemoAspNetCore3"
+    },
+    "name": "",
+    "fullName": "",
+    "syntaxType": "ProtoRoot",
+    "nested": {
+      "MyOwnService": {
+        "name": "MyOwnService",
+        "fullName": ".MyOwnService",
+        "comment": null,
+        "syntaxType": "ServiceDefinition",
+        "methods": {
+          "WhoIs": {
+            "name": "WhoIs",
+            "fullName": ".MyOwnService.WhoIs",
+            "comment": null,
+            "requestType": {
+              "value": "EmptyRequest",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".EmptyRequest"
+            },
+            "responseType": {
+              "value": "WhoIsReply",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".WhoIsReply"
+            }
+          },
+          "IntroduceYourself": {
+            "name": "IntroduceYourself",
+            "fullName": ".MyOwnService.IntroduceYourself",
+            "comment": null,
+            "requestType": {
+              "value": "IntroduceYourselfRequest",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".IntroduceYourselfRequest"
+            },
+            "responseType": {
+              "value": "IntroduceYourselfReply",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".IntroduceYourselfReply"
+            }
+          }
+        }
+      },
+      "EmptyRequest": {
+        "name": "EmptyRequest",
+        "fullName": ".EmptyRequest",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "fields": {}
+      },
+      "WhoIsReply": {
+        "name": "WhoIsReply",
+        "fullName": ".WhoIsReply",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "fields": {
+          "message": {
+            "name": "message",
+            "fullName": ".WhoIsReply.message",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 1,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          }
+        }
+      },
+      "IntroduceYourselfRequest": {
+        "name": "IntroduceYourselfRequest",
+        "fullName": ".IntroduceYourselfRequest",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "fields": {
+          "name": {
+            "name": "name",
+            "fullName": ".IntroduceYourselfRequest.name",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 1,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          }
+        }
+      },
+      "IntroduceYourselfReply": {
+        "name": "IntroduceYourselfReply",
+        "fullName": ".IntroduceYourselfReply",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "fields": {
+          "name": {
+            "name": "name",
+            "fullName": ".IntroduceYourselfReply.name",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 1,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          },
+          "job": {
+            "name": "job",
+            "fullName": ".IntroduceYourselfReply.job",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 2,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          },
+          "country": {
+            "name": "country",
+            "fullName": ".IntroduceYourselfReply.country",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 3,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          },
+          "citizenship": {
+            "name": "citizenship",
+            "fullName": ".IntroduceYourselfReply.citizenship",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "rule": "repeated",
+            "id": 4,
+            "required": false,
+            "optional": true,
+            "repeated": true,
+            "map": false
+          },
+          "skills": {
+            "name": "skills",
+            "fullName": ".IntroduceYourselfReply.skills",
+            "comment": null,
+            "type": {
+              "value": "Skill",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".Skill"
+            },
+            "rule": "repeated",
+            "id": 5,
+            "required": false,
+            "optional": true,
+            "repeated": true,
+            "map": false
+          }
+        }
+      },
+      "Skill": {
+        "name": "Skill",
+        "fullName": ".Skill",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "fields": {
+          "skillName": {
+            "name": "skillName",
+            "fullName": ".Skill.skillName",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 1,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          },
+          "skillLevel": {
+            "name": "skillLevel",
+            "fullName": ".Skill.skillLevel",
+            "comment": null,
+            "type": {
+              "value": "SkillLevel",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".SkillLevel"
+            },
+            "id": 2,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          }
+        }
+      },
+      "SkillLevel": {
+        "name": "SkillLevel",
+        "fullName": ".SkillLevel",
+        "comment": null,
+        "syntaxType": "EnumDefinition",
+        "values": {
+          "GOOD": 0,
+          "BAD": 1
+        }
+      }
+    }
+  },
+  "syntaxType": "ProtoDocument"
+}

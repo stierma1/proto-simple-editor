@@ -1,0 +1,25 @@
+{
+  "name": "proto-simple-editor",
+  "version": "1.0.0",
+  "description": "Edit an ProtoDocument AST document via code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha test/regression/regress.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stierma1/proto-simple-editor.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stierma1/proto-simple-editor/issues"
+  },
+  "homepage": "https://github.com/stierma1/proto-simple-editor#readme",
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "proto-ast-compile": "^1.0.1",
+    "proto-parser": "^0.0.9"
+  }
+}

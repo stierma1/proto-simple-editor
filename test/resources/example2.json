@@ -1,0 +1,137 @@
+{
+  "imports": [
+    "other.proto"
+  ],
+  "syntax": "proto3",
+  "root": {
+    "options": {
+      "java_package": "com.example.foo"
+    },
+    "name": "",
+    "fullName": "",
+    "syntaxType": "ProtoRoot",
+    "nested": {
+      "EnumAllowingAlias": {
+        "options": {
+          "allow_alias": true
+        },
+        "name": "EnumAllowingAlias",
+        "fullName": ".EnumAllowingAlias",
+        "comment": null,
+        "syntaxType": "EnumDefinition",
+        "values": {
+          "UNKNOWN": 0,
+          "STARTED": 1,
+          "RUNNING": 1
+        }
+      },
+      "outer": {
+        "options": {
+          "(my_option).a": true
+        },
+        "name": "outer",
+        "fullName": ".outer",
+        "comment": null,
+        "syntaxType": "MessageDefinition",
+        "nested": {
+          "inner": {
+            "name": "inner",
+            "fullName": ".outer.inner",
+            "comment": null,
+            "syntaxType": "MessageDefinition",
+            "fields": {
+              "ival": {
+                "name": "ival",
+                "fullName": ".outer.inner.ival",
+                "comment": "Level 2",
+                "type": {
+                  "value": "int64",
+                  "syntaxType": "BaseType"
+                },
+                "id": 1,
+                "required": false,
+                "optional": true,
+                "repeated": false,
+                "map": false
+              }
+            }
+          },
+          "inner2": {
+            "name": "inner2",
+            "fullName": ".outer.inner2",
+            "comment": null,
+            "syntaxType": "MessageDefinition",
+            "fields": {
+              "ival2": {
+                "name": "ival2",
+                "fullName": ".outer.inner2.ival",
+                "comment": "Level 2",
+                "type": {
+                  "value": "int64",
+                  "syntaxType": "BaseType"
+                },
+                "id": 5,
+                "required": false,
+                "optional": true,
+                "repeated": false,
+                "map": false
+              }
+            }
+          }
+        },
+        "fields": {
+          "inner_message": {
+            "name": "inner_message",
+            "fullName": ".outer.inner_message",
+            "comment": null,
+            "type": {
+              "value": "inner",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".outer.inner"
+            },
+            "rule": "repeated",
+            "id": 2,
+            "required": false,
+            "optional": true,
+            "repeated": true,
+            "map": false
+          },
+          "enum_field": {
+            "name": "enum_field",
+            "fullName": ".outer.enum_field",
+            "comment": null,
+            "type": {
+              "value": "EnumAllowingAlias",
+              "syntaxType": "Identifier",
+              "resolvedValue": ".EnumAllowingAlias"
+            },
+            "id": 3,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": false
+          },
+          "my_map": {
+            "name": "my_map",
+            "fullName": ".outer.my_map",
+            "comment": null,
+            "type": {
+              "value": "string",
+              "syntaxType": "BaseType"
+            },
+            "id": 4,
+            "required": false,
+            "optional": true,
+            "repeated": false,
+            "map": true,
+            "keyType": {
+              "value": "int32",
+              "syntaxType": "BaseType"
+            }
+          }
+        }
+      }
+    }
+  },
+  "syntaxType": "ProtoDocument"
+}
