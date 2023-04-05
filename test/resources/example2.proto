@@ -1,5 +1,6 @@
 syntax = "proto3";
 import public "other.proto";
+package my.proto.package;
 option java_package = "com.example.foo";
 enum EnumAllowingAlias {
   option allow_alias = true;
@@ -11,6 +12,9 @@ message outer {
   option (my_option).a = true;
   message inner {   // Level 2
     int64 ival = 1;
+  }
+  message inner2 {
+    int64 ival2 = 5;
   }
   repeated inner inner_message = 2;
   EnumAllowingAlias enum_field =3;

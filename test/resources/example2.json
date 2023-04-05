@@ -1,132 +1,154 @@
 {
+  "package": "my.proto.package",
   "imports": [
     "other.proto"
   ],
   "syntax": "proto3",
   "root": {
-    "options": {
-      "java_package": "com.example.foo"
-    },
     "name": "",
     "fullName": "",
     "syntaxType": "ProtoRoot",
     "nested": {
-      "EnumAllowingAlias": {
-        "options": {
-          "allow_alias": true
-        },
-        "name": "EnumAllowingAlias",
-        "fullName": ".EnumAllowingAlias",
-        "comment": null,
-        "syntaxType": "EnumDefinition",
-        "values": {
-          "UNKNOWN": 0,
-          "STARTED": 1,
-          "RUNNING": 1
-        }
-      },
-      "outer": {
-        "options": {
-          "(my_option).a": true
-        },
-        "name": "outer",
-        "fullName": ".outer",
-        "comment": null,
-        "syntaxType": "MessageDefinition",
+      "my": {
+        "name": "my",
+        "fullName": ".my",
+        "syntaxType": "NamespaceDefinition",
         "nested": {
-          "inner": {
-            "name": "inner",
-            "fullName": ".outer.inner",
-            "comment": null,
-            "syntaxType": "MessageDefinition",
-            "fields": {
-              "ival": {
-                "name": "ival",
-                "fullName": ".outer.inner.ival",
-                "comment": "Level 2",
-                "type": {
-                  "value": "int64",
-                  "syntaxType": "BaseType"
+          "proto": {
+            "name": "proto",
+            "fullName": ".my.proto",
+            "syntaxType": "NamespaceDefinition",
+            "nested": {
+              "package": {
+                "options": {
+                  "java_package": "com.example.foo"
                 },
-                "id": 1,
-                "required": false,
-                "optional": true,
-                "repeated": false,
-                "map": false
+                "name": "package",
+                "fullName": ".my.proto.package",
+                "syntaxType": "NamespaceDefinition",
+                "nested": {
+                  "EnumAllowingAlias": {
+                    "options": {
+                      "allow_alias": true
+                    },
+                    "name": "EnumAllowingAlias",
+                    "fullName": ".my.proto.package.EnumAllowingAlias",
+                    "comment": null,
+                    "syntaxType": "EnumDefinition",
+                    "values": {
+                      "UNKNOWN": 0,
+                      "STARTED": 1,
+                      "RUNNING": 1
+                    }
+                  },
+                  "outer": {
+                    "options": {
+                      "(my_option).a": true
+                    },
+                    "name": "outer",
+                    "fullName": ".my.proto.package.outer",
+                    "comment": null,
+                    "syntaxType": "MessageDefinition",
+                    "nested": {
+                      "inner": {
+                        "name": "inner",
+                        "fullName": ".my.proto.package.outer.inner",
+                        "comment": null,
+                        "syntaxType": "MessageDefinition",
+                        "fields": {
+                          "ival": {
+                            "name": "ival",
+                            "fullName": ".my.proto.package.outer.inner.ival",
+                            "comment": "Level 2",
+                            "type": {
+                              "value": "int64",
+                              "syntaxType": "BaseType"
+                            },
+                            "id": 1,
+                            "required": false,
+                            "optional": true,
+                            "repeated": false,
+                            "map": false
+                          }
+                        }
+                      },
+                      "inner2": {
+                        "name": "inner2",
+                        "fullName": ".my.proto.package.outer.inner2",
+                        "comment": null,
+                        "syntaxType": "MessageDefinition",
+                        "fields": {
+                          "ival2": {
+                            "name": "ival2",
+                            "fullName": ".my.proto.package.outer.inner2.ival2",
+                            "comment": null,
+                            "type": {
+                              "value": "int64",
+                              "syntaxType": "BaseType"
+                            },
+                            "id": 5,
+                            "required": false,
+                            "optional": true,
+                            "repeated": false,
+                            "map": false
+                          }
+                        }
+                      }
+                    },
+                    "fields": {
+                      "inner_message": {
+                        "name": "inner_message",
+                        "fullName": ".my.proto.package.outer.inner_message",
+                        "comment": null,
+                        "type": {
+                          "value": "inner",
+                          "syntaxType": "Identifier",
+                          "resolvedValue": ".my.proto.package.outer.inner"
+                        },
+                        "rule": "repeated",
+                        "id": 2,
+                        "required": false,
+                        "optional": true,
+                        "repeated": true,
+                        "map": false
+                      },
+                      "enum_field": {
+                        "name": "enum_field",
+                        "fullName": ".my.proto.package.outer.enum_field",
+                        "comment": null,
+                        "type": {
+                          "value": "EnumAllowingAlias",
+                          "syntaxType": "Identifier",
+                          "resolvedValue": ".my.proto.package.EnumAllowingAlias"
+                        },
+                        "id": 3,
+                        "required": false,
+                        "optional": true,
+                        "repeated": false,
+                        "map": false
+                      },
+                      "my_map": {
+                        "name": "my_map",
+                        "fullName": ".my.proto.package.outer.my_map",
+                        "comment": null,
+                        "type": {
+                          "value": "string",
+                          "syntaxType": "BaseType"
+                        },
+                        "id": 4,
+                        "required": false,
+                        "optional": true,
+                        "repeated": false,
+                        "map": true,
+                        "keyType": {
+                          "value": "int32",
+                          "syntaxType": "BaseType"
+                        }
+                      }
+                    }
+                  }
+                }
               }
-            }
-          },
-          "inner2": {
-            "name": "inner2",
-            "fullName": ".outer.inner2",
-            "comment": null,
-            "syntaxType": "MessageDefinition",
-            "fields": {
-              "ival2": {
-                "name": "ival2",
-                "fullName": ".outer.inner2.ival",
-                "comment": "Level 2",
-                "type": {
-                  "value": "int64",
-                  "syntaxType": "BaseType"
-                },
-                "id": 5,
-                "required": false,
-                "optional": true,
-                "repeated": false,
-                "map": false
-              }
-            }
-          }
-        },
-        "fields": {
-          "inner_message": {
-            "name": "inner_message",
-            "fullName": ".outer.inner_message",
-            "comment": null,
-            "type": {
-              "value": "inner",
-              "syntaxType": "Identifier",
-              "resolvedValue": ".outer.inner"
-            },
-            "rule": "repeated",
-            "id": 2,
-            "required": false,
-            "optional": true,
-            "repeated": true,
-            "map": false
-          },
-          "enum_field": {
-            "name": "enum_field",
-            "fullName": ".outer.enum_field",
-            "comment": null,
-            "type": {
-              "value": "EnumAllowingAlias",
-              "syntaxType": "Identifier",
-              "resolvedValue": ".EnumAllowingAlias"
-            },
-            "id": 3,
-            "required": false,
-            "optional": true,
-            "repeated": false,
-            "map": false
-          },
-          "my_map": {
-            "name": "my_map",
-            "fullName": ".outer.my_map",
-            "comment": null,
-            "type": {
-              "value": "string",
-              "syntaxType": "BaseType"
-            },
-            "id": 4,
-            "required": false,
-            "optional": true,
-            "repeated": false,
-            "map": true,
-            "keyType": {
-              "value": "int32",
-              "syntaxType": "BaseType"
             }
           }
         }

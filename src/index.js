@@ -22,13 +22,47 @@ const mapRegex = /^map\<([^, ]+),\s*([^, ]+)\>/;
 class ProtoDocumentEditor{
     constructor(protoDoc){
         this.protoDoc = JSON.parse(JSON.stringify(protoDoc)); //Clone the ProtoDocument
+        this.namespace = null;
+        this.topLevelNode = null;
+        this._setNamespace();
+    }
+
+    _setNamespace(){
+        let root = this.protoDoc.root;
+        for(let r in root.nested){
+            if(root.nested[r].syntaxType === "NamespaceDefinition"){
+                this.namespace = this._getNamespace(root.nested[r]);
+                return;
+            }
+        }
+        this.topLevelNode = root;
+    }
+
+    _getNamespace(node){
+        if(node.syntaxType === "NamespaceDefinition"){
+            let childNamespace = null;
+            for(let nestNode in node.nested){
+                if(node.nested[nestNode].syntaxType === "NamespaceDefinition"){
+                    childNamespace = this._getNamespace(node.nested[nestNode]);
+                }
+            }
+            if(childNamespace){
+                return node.name + "." + childNamespace;
+            } else {
+                this.topLevelNode = node;
+                return node.name;
+            }
+            
+        }
+
+        this.topLevelNode = node;
+        return null;
     }
 
     getTopLevelMessageNames(){
         let messageNames = [];
-        
-        for(let messageName in this.protoDoc.root.nested){
-            if(this.protoDoc.root.nested[messageName].syntaxType === "MessageDefinition"){
+        for(let messageName in this.topLevelNode.nested){
+            if(this.topLevelNode.nested[messageName].syntaxType === "MessageDefinition"){
                 messageNames.push(messageName);
             }
         }
@@ -43,8 +77,8 @@ class ProtoDocumentEditor{
     getMessageTopLevelFields(messageName){
         if(this.hasMessageDefinition(messageName)){
             let fields = [];
-            for(let fieldName in this.protoDoc.root.nested[messageName].fields){
-                fields.push(this.protoDoc.root.nested[messageName].fields[fieldName]);
+            for(let fieldName in this.topLevelNode.nested[messageName].fields){
+                fields.push(this.topLevelNode.nested[messageName].fields[fieldName]);
             }
             return fields;
         }
@@ -53,7 +87,7 @@ class ProtoDocumentEditor{
 
     getMaximumFieldId(messageName){
         if(this.hasMessageDefinition(messageName)){
-            return this._getMaximumFieldId(this.protoDoc.root.nested[messageName]);
+            return this._getMaximumFieldId(this.topLevelNode.nested[messageName]);
         }
         throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
     }
@@ -75,24 +109,26 @@ class ProtoDocumentEditor{
         return maximum;
     }
 
-    addField(messageName, fieldName, fieldType, options = {}){
+    addField(messageName, fieldName, fieldType, features = {}){
         if(!this.hasMessageDefinition(messageName)){
             throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
         }
         let fieldNode;
+        let namespacePrefix = this.namespace ? "." + this.namespace : ".";
         if(BASE_TYPES[fieldType]){
             fieldNode = {
                 "name": fieldName,
-                "fullName": "." + messageName + "." + fieldName,
-                "comment": options.comment || null,
+                "fullName": namespacePrefix + messageName + "." + fieldName,
+                "options": features.options,
+                "comment": features.comment || null,
                 "type": {
                   "value": fieldType,
                   "syntaxType": "BaseType"
                 },
                 "id": this.getMaximumFieldId(messageName) + 1,
-                "required": options.required || false,
-                "optional": options.optional === undefined ? true : !options.required,
-                "repeated": options.repeated || false,
+                "required": features.required || false,
+                "optional": features.optional === undefined ? true : !features.required,
+                "repeated": features.repeated || false,
                 "map": false
               };
 
@@ -100,16 +136,17 @@ class ProtoDocumentEditor{
             let [_,keyType, valueType] = mapRegex.exec(fieldType);
             fieldNode = {
                 "name": fieldName,
-                "fullName": "." + messageName + "." + fieldName,
-                "comment": options.comment || null,
+                "fullName": namespacePrefix + messageName + "." + fieldName,
+                "options": features.options,
+                "comment": features.comment || null,
                 "type": {
                   "value": valueType,
                   "syntaxType": BASE_TYPES[valueType] ?  "BaseType" : "Identifier"
                 },
                 "id": this.getMaximumFieldId(messageName) + 1,
-                "required": options.required || false,
-                "optional": options.optional === undefined ? true : !options.required,
-                "repeated": options.repeated || false,
+                "required": features.required || false,
+                "optional": features.optional === undefined ? true : !features.required,
+                "repeated": features.repeated || false,
                 "map": true,
                 "keyType": {
                     "value": keyType,
@@ -119,22 +156,23 @@ class ProtoDocumentEditor{
         }else {
             fieldNode = {
                 "name": fieldName,
-                "fullName": "." + messageName + "." + fieldName,
-                "comment": options.comment || null,
+                "fullName": namespacePrefix + messageName + "." + fieldName,
+                "options": features.options,
+                "comment": features.comment || null,
                 "type": {
                   "value": fieldType,
                   "syntaxType": "Identifier",
                   "resolvedValue": "." + fieldType
                 },
                 "id": this.getMaximumFieldId(messageName) + 1,
-                "required": options.required || false,
-                "optional": options.optional === undefined ? true : !options.required,
-                "repeated": options.repeated || false,
+                "required": features.required || false,
+                "optional": features.optional === undefined ? true : !features.required,
+                "repeated": features.repeated || false,
                 "map": false
               };
         }
 
-        let messageNode = this.protoDoc.root.nested[messageName];
+        let messageNode = this.topLevelNode.nested[messageName];
         if(messageNode[fieldName]){
             throw new Error(`Field "${fieldName}" already exists in "${messageName}"`)
         }

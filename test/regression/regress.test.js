@@ -12,6 +12,8 @@ let document = compile(protoDocument);
 let parseDocument = parser.parse(document);
 
 assert.equal(JSON.stringify(parseDocument), JSON.stringify(protoDocument));
+let doc = parser.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.proto"), "utf-8"));
+fs.writeFileSync(path.join(__dirname, "../resources", "example2.json"), JSON.stringify(doc, null, 2));
 
 /*const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
 let editor2 = new ProtoDocumentEditor(protoDocument2);
@@ -23,13 +25,20 @@ let document2 = compile(editor2.extractProtoDocument());
 console.log(document2);*/
 
 describe("ProtoDocument", function(){
+    const protoDocument1 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example1.json"), "utf-8"));
     const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
     describe("Message Editing Methods", function(){
+        it("Should get maximum id", function(){
+            let editor = new ProtoDocumentEditor(protoDocument1);
+            assert.equal(5, editor.getMaximumFieldId("IntroduceYourselfReply"));
+            assert.equal(2, editor.getMaximumFieldId("Skill"));
+        });
+
         it("Should get maximum id", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
             assert.equal(5, editor.getMaximumFieldId("outer"));
         });
-    
+        
         it("Should get fields", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
             let fields = editor.getMessageTopLevelFields("outer");
