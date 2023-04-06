@@ -1,6 +1,6 @@
 {
   "name": "proto-simple-editor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Edit an ProtoDocument AST document via code.",
   "main": "index.js",
   "scripts": {

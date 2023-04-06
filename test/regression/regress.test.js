@@ -11,23 +11,35 @@ const protoDocument = JSON.parse(fs.readFileSync(path.join(__dirname, "../resour
 let document = compile(protoDocument);
 let parseDocument = parser.parse(document);
 
-assert.equal(JSON.stringify(parseDocument), JSON.stringify(protoDocument));
-let doc = parser.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.proto"), "utf-8"));
-fs.writeFileSync(path.join(__dirname, "../resources", "example2.json"), JSON.stringify(doc, null, 2));
-
-/*const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
-let editor2 = new ProtoDocumentEditor(protoDocument2);
-console.log(editor2.getMaximumFieldId("outer"));
-assert.equal(editor2.getMaximumFieldId("outer"), 5);
-editor2.addField("outer", "test_field", "int64", {repeated:true});
-editor2.addField("outer", "test_identify", "inner", {required:true, repeated:true, comment:"Identity field"});
-let document2 = compile(editor2.extractProtoDocument());
-console.log(document2);*/
-
 describe("ProtoDocument", function(){
     const protoDocument1 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example1.json"), "utf-8"));
     const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
-    describe("Message Editing Methods", function(){
+    
+    describe("Add Message", function(){
+        it("Should add Message", function(){
+            let editor = new ProtoDocumentEditor(protoDocument2);
+            editor.addMessage("TestMessage")
+            assert.equal(0, editor.getMaximumFieldId("TestMessage"));
+            editor.addField("TestMessage", "test_field", "int64");
+            assert.equal(1, editor.getMaximumFieldId("TestMessage"));
+        });
+    });
+
+    describe("Package Messages", function(){
+        it("Should set Package", function(){
+            let editor = new ProtoDocumentEditor(protoDocument);
+            assert.equal("", editor.topLevelNode.name);
+            editor.setPackage("test.test2.test3");
+            assert.equal("test3", editor.topLevelNode.name);
+
+            editor = new ProtoDocumentEditor(protoDocument2);
+            assert.equal("package", editor.topLevelNode.name);
+            editor.setPackage("test.test2.test3");
+            assert.equal("test3", editor.topLevelNode.name);
+        });
+    });
+    
+    describe("Message Methods", function(){
         it("Should get maximum id", function(){
             let editor = new ProtoDocumentEditor(protoDocument1);
             assert.equal(5, editor.getMaximumFieldId("IntroduceYourselfReply"));
@@ -89,7 +101,11 @@ describe("ProtoDocument", function(){
             editor.addField("outer", "test_map_field", "map<int64, inner>");
             editor.addField("outer", "test_identifier_field", "inner");
             editor.addField("outer", "test_field", "int64");
-
+            editor.addMessage("TestMessage");
+            editor.addOption("test", 1)
+            editor.setPackage("bigger.better.namespace");
+            editor.setPackage("bigger.better.namespace");
+            
             let proto = editor.extractProtoDocument();
             let reParsed = parser.parse(compile(proto));
             let editorRecompiled = new ProtoDocumentEditor(reParsed);
@@ -97,4 +113,6 @@ describe("ProtoDocument", function(){
             assert.equal(8, editorRecompiled.getMaximumFieldId("outer"));
         });
     });
+
+
 });

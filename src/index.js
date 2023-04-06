@@ -179,7 +179,91 @@ class ProtoDocumentEditor{
 
         messageNode.fields[fieldName] = fieldNode;
 
-        return fieldNode;
+        return this;
+    }
+
+    setPackage(namespace){
+        let namespaceOptions = this.topLevelNode.options;
+        let namespaceSegments = namespace.split(".");
+        let topLevelNode = {
+            "options": this.getOptions(),
+            "name": namespaceSegments[namespaceSegments.length - 1],
+            "fullName": "." + namespaceSegments.join("."),
+            "syntaxType": "NamespaceDefinition",
+            "nested": this.topLevelNode.nested
+        };
+        let currentNode = topLevelNode;
+        for(let i = namespaceSegments.length - 1; i-- ; i >= 0){
+            let parentSegments = namespaceSegments.slice(0, i + 1);
+            let parentNode = {
+                "name": parentSegments[i],
+                "fullName": "." + parentSegments.join("."),
+                "syntaxType": "NamespaceDefinition",
+                "nested": {
+                }
+            };
+            parentNode.nested[currentNode.name] = currentNode;
+            currentNode = parentNode;
+        }
+        this.protoDoc.root.nested = {};
+        this.protoDoc.root.nested[currentNode.name] = currentNode;
+        this.topLevelNode = topLevelNode;
+        this.namespace = namespaceSegments.join(".");
+        return this;
+    }
+
+    getPackage(){
+        return this.namespace;
+    }
+
+    clearPackage(){
+        this.protoDoc.root.nested = this.topLevelNode.nested;
+        this.topLevelNode = this.protoDoc.root;
+        return this;
+    }
+
+    addImport(importStr){
+        let imports = this.protoDoc.imports || [];
+        imports.push(importStr);
+        this.protoDoc.imports = imports;
+        return this;
+    }
+
+    getImports(){
+        return (this.protoDoc.imports || []).concat([]);
+    }
+
+    addOption(key, value){
+        let options = this.topLevelNode.options || {};
+        options[key] = value;
+        this.topLevelNode.options = options;
+        return this;
+    }
+
+    getOptions(){
+        let options =  this.topLevelNode.options || {};
+        let optionCopy = {};
+        for(let key in options){
+            optionCopy[key] = options[key];
+        }
+
+        return optionCopy;
+    }
+
+    addMessage(messageName, options = {}){
+        let namespacePrefix = this.namespace ? "." + this.namespace : ".";
+        let messageNode = {
+            name:messageName,
+            fullName: namespacePrefix + messageName,
+            comment: options.comment,
+            syntaxType: "MessageDefinition",
+            fields: {
+
+            }
+        }
+
+        this.topLevelNode.nested[messageName] = messageNode;
+        return this;
     }
 
     extractProtoDocument(){
