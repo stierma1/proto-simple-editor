@@ -21,10 +21,31 @@ const mapRegex = /^map\<([^, ]+),\s*([^, ]+)\>/;
 
 class ProtoDocumentEditor{
     constructor(protoDoc){
-        this.protoDoc = JSON.parse(JSON.stringify(protoDoc)); //Clone the ProtoDocument
+        if(protoDoc){
+            this.protoDoc = JSON.parse(JSON.stringify(protoDoc)); //Clone the ProtoDocument
+        } else {
+            this.createEmptyDocument();
+        }
         this.namespace = null;
         this.topLevelNode = null;
         this._setNamespace();
+    }
+
+    createEmptyDocument(){
+        let documentNode = {
+            "syntax": "proto3",
+            "root": {
+              "name": "",
+              "fullName": "",
+              "syntaxType": "ProtoRoot",
+              "nested": {}
+            },
+            "syntaxType": "ProtoDocument"
+        }
+
+        this.protoDoc = documentNode;
+        this._setNamespace();
+        return this;
     }
 
     _setNamespace(){
@@ -182,11 +203,48 @@ class ProtoDocumentEditor{
         return this;
     }
 
+    getMessageFieldNames(messageName){
+        if(!this.hasMessageDefinition(messageName)){
+            throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
+        }
+        let fields = [];
+        for(let fieldName in this.topLevelNode.nested[messageName].fields){
+            fields.push(fieldName);
+        }
+
+        return fields;
+    }
+
+    isFieldInMessage(messageName, fieldName){
+        return this.getMessageFieldNames(messageName).indexOf(fieldName) > -1;
+    }
+
+    getOptionsFromField(messageName, fieldName){
+        if(!this.isFieldInMessage(messageName, fieldName)){
+            throw new Error("Message: " + messageName + " does not contain field: " + fieldName);
+        }
+        let options = {};
+        let fieldOptions = this.topLevelNode.nested[messageName].fields[fieldName].options || {};
+        for(let key in fieldOptions){
+            options[key] = fieldOptions[key];
+        }
+        return options;
+    }
+
+    addOptionToField(messageName, fieldName, key, value){
+        if(!this.isFieldInMessage(messageName, fieldName)){
+            throw new Error("Message: " + messageName + " does not contain field: " + fieldName);
+        }
+        let options = this.topLevelNode.nested[messageName].fields[fieldName].options || {};
+        options[key] = value;
+        this.topLevelNode.nested[messageName].fields[fieldName].options = options;
+        return this;
+    }
+
     setPackage(namespace){
-        let namespaceOptions = this.topLevelNode.options;
         let namespaceSegments = namespace.split(".");
         let topLevelNode = {
-            "options": this.getOptions(),
+            "options": this.getOptionsFromDoc(),
             "name": namespaceSegments[namespaceSegments.length - 1],
             "fullName": "." + namespaceSegments.join("."),
             "syntaxType": "NamespaceDefinition",
@@ -233,14 +291,37 @@ class ProtoDocumentEditor{
         return (this.protoDoc.imports || []).concat([]);
     }
 
-    addOption(key, value){
+    addOptionToMessage(messageName, key, value){
+        if(!this.hasMessageDefinition(messageName)){
+            throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
+        }
+        let options = this.topLevelNode.nested[messageName].options || {};
+        options[key] = value;
+        this.topLevelNode.nested[messageName].options = options;
+        return this;
+    }
+
+    getOptionsFromMessage(messageName){
+        if(!this.hasMessageDefinition(messageName)){
+            throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
+        }
+        let options = this.topLevelNode.nested[messageName].options || {};
+        let optionCopy = {};
+        for(let key in options){
+            optionCopy[key] = options[key];
+        }
+
+        return optionCopy;
+    }
+
+    addOptionToDoc(key, value){
         let options = this.topLevelNode.options || {};
         options[key] = value;
         this.topLevelNode.options = options;
         return this;
     }
 
-    getOptions(){
+    getOptionsFromDoc(){
         let options =  this.topLevelNode.options || {};
         let optionCopy = {};
         for(let key in options){
@@ -250,18 +331,18 @@ class ProtoDocumentEditor{
         return optionCopy;
     }
 
-    addMessage(messageName, options = {}){
+    addMessage(messageName, features = {}){
         let namespacePrefix = this.namespace ? "." + this.namespace : ".";
         let messageNode = {
             name:messageName,
             fullName: namespacePrefix + messageName,
-            comment: options.comment,
+            comment: features.comment,
             syntaxType: "MessageDefinition",
+            options: features.options,
             fields: {
 
             }
         }
-
         this.topLevelNode.nested[messageName] = messageNode;
         return this;
     }

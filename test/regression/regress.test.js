@@ -15,6 +15,20 @@ describe("ProtoDocument", function(){
     const protoDocument1 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example1.json"), "utf-8"));
     const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
     
+    describe("Empty Doc", function(){
+        it("Should add Message", function(){
+            let editor = new ProtoDocumentEditor();
+            editor.addMessage("TestMessage")
+            assert.equal(0, editor.getMaximumFieldId("TestMessage"));
+            editor.addField("TestMessage", "test_field", "int64");
+            assert.equal(1, editor.getMaximumFieldId("TestMessage"));
+            editor.addOptionToField("TestMessage", "test_field", "deprecated", true);
+            assert.equal(true, editor.getOptionsFromField("TestMessage", "test_field")["deprecated"]);
+            editor.addOptionToMessage("TestMessage", "deprecated", true);
+            assert.equal(true, editor.getOptionsFromMessage("TestMessage")["deprecated"]);
+        });
+    });
+
     describe("Add Message", function(){
         it("Should add Message", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
@@ -96,13 +110,19 @@ describe("ProtoDocument", function(){
             assert.equal("BaseType", matchedField[0].keyType.syntaxType);
         });
 
+        it("Should get field names", function(){
+            let editor = new ProtoDocumentEditor(protoDocument2);
+            editor.addField("outer", "test_field", "map<int64, Inner>");
+            assert.equal(true, editor.isFieldInMessage("outer", "test_field"));
+        });
+
         it("Should create valid ProtoDocuments", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
             editor.addField("outer", "test_map_field", "map<int64, inner>");
             editor.addField("outer", "test_identifier_field", "inner");
             editor.addField("outer", "test_field", "int64");
             editor.addMessage("TestMessage");
-            editor.addOption("test", 1)
+            editor.addOptionToDoc("test", 1)
             editor.setPackage("bigger.better.namespace");
             editor.setPackage("bigger.better.namespace");
             
