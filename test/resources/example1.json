@@ -80,6 +80,17 @@
         "fullName": ".IntroduceYourselfRequest",
         "comment": null,
         "syntaxType": "MessageDefinition",
+        "reserved": [
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          "foo"
+        ],
         "fields": {
           "name": {
             "name": "name",

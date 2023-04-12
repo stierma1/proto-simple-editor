@@ -120,6 +120,19 @@ class ProtoDocumentEditor{
                 maximum = node.fields[messageFieldName].id;
             }
         }
+        if(node.reserved){
+            let numerics = node.reserved.filter((a) => {
+                return typeof(a) !== "string";
+            });
+            for(let range of numerics){
+                if(range[0] > maximum){
+                    maximum = range[0];
+                }
+                if(range[1] > maximum){
+                    maximum = range[1];
+                }
+            }
+        }
         for(let subMessageName in node.nested){
             if(node.nested[subMessageName].syntaxType === "MessageDefinition"){
                 let subMax = this._getMaximumFieldId(node.nested[subMessageName]);
@@ -130,10 +143,25 @@ class ProtoDocumentEditor{
         return maximum;
     }
 
+    throwIfFieldIsPresent(messageName, fieldName){
+        let messageNode = this.topLevelNode.nested[messageName];
+        if(messageNode.reserved){
+            if(messageNode.reserved.indexOf(fieldName) !== -1){
+                throw new Error(`Field is reserved in message: ${messageName}, field: ${fieldName}`);
+            }
+        }
+        if(this.getMessageTopLevelFields(messageName).indexOf(fieldName) !== -1){
+            throw new Error(`Field is present in message: ${messageName}, field: ${fieldName}`);
+        }
+        return true;
+    }
+
     addField(messageName, fieldName, fieldType, features = {}){
         if(!this.hasMessageDefinition(messageName)){
             throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
         }
+        this.throwIfFieldIsPresent(messageName, fieldName);
+
         let fieldNode;
         let namespacePrefix = this.namespace ? "." + this.namespace : ".";
         if(BASE_TYPES[fieldType]){
@@ -344,6 +372,26 @@ class ProtoDocumentEditor{
             }
         }
         this.topLevelNode.nested[messageName] = messageNode;
+        return this;
+    }
+
+    addReserved(messageName, reservedItem){
+        if(!this.hasMessageDefinition(messageName)){
+            throw new Error("Message Name not found in Top Level Messages: Found " + messageName);
+        }
+        if(typeof(reservedItem) !== "string" && !(reservedItem instanceof Array)){
+            throw new Error("Reeserved Item must be either a string or array of numbers [(from), (to)]" );
+        }
+        let reserved = this.topLevelNode.nested[messageName].reserved || [];
+        if(reserved.indexOf(reservedItem) !== -1){
+            return this;
+        }
+        if(typeof(reservedItem) === "string"){
+            reserved.push(reservedItem);
+        } else {
+            reserved.push(reservedItem); //TODO merge overlapping ranges;
+        }
+        this.topLevelNode.nested[messageName].reserved = reserved;
         return this;
     }
 

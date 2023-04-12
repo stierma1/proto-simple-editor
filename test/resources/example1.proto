@@ -15,6 +15,8 @@ message WhoIsReply {
 }
 
 message IntroduceYourselfRequest {
+	reserved 2,3;
+	reserved "foo";
 	string name = 1;
 }
 

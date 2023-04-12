@@ -6,12 +6,13 @@ const parser = require("proto-parser");
 const compile = compiler.compile;
 const {ProtoDocumentEditor} = require("../../index");
  
-const protoDocument = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example1.json"), "utf-8"));
+const proto = fs.readFileSync(path.join(__dirname, "../resources", "example1.proto"), "utf-8");
+let doc = parser.parse(proto);
 
-let document = compile(protoDocument);
-let parseDocument = parser.parse(document);
+fs.writeFileSync(path.join(__dirname, "../resources", "example1.json"), JSON.stringify(doc, null, 2));
 
 describe("ProtoDocument", function(){
+    
     const protoDocument1 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example1.json"), "utf-8"));
     const protoDocument2 = JSON.parse(fs.readFileSync(path.join(__dirname, "../resources", "example2.json"), "utf-8"));
     
@@ -41,7 +42,7 @@ describe("ProtoDocument", function(){
 
     describe("Package Messages", function(){
         it("Should set Package", function(){
-            let editor = new ProtoDocumentEditor(protoDocument);
+            let editor = new ProtoDocumentEditor(protoDocument1);
             assert.equal("", editor.topLevelNode.name);
             editor.setPackage("test.test2.test3");
             assert.equal("test3", editor.topLevelNode.name);
@@ -64,7 +65,30 @@ describe("ProtoDocument", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
             assert.equal(5, editor.getMaximumFieldId("outer"));
         });
+
+        it("Should get maximum id reading reserved list", function(){
+            let editor = new ProtoDocumentEditor(protoDocument1);
+            let id = editor.getMaximumFieldId("IntroduceYourselfRequest");
+            assert.equal(3, id);
+            editor.addField("IntroduceYourselfRequest", "test")
+            id = editor.getMaximumFieldId("IntroduceYourselfRequest");
+            assert.equal(4, id);
+            try{
+                editor.addField("IntroduceYourselfRequest", "foo") // Reserved field
+            }catch(e){
+
+            }
+            id = editor.getMaximumFieldId("IntroduceYourselfRequest");
+            assert.equal(4, id);
+        });
         
+        it("Should add to Reserved", function(){
+            let editor = new ProtoDocumentEditor(protoDocument1);
+            editor.addReserved("IntroduceYourselfRequest", [4,4]);
+            let id = editor.getMaximumFieldId("IntroduceYourselfRequest");
+            assert.equal(4, id);
+        });
+
         it("Should get fields", function(){
             let editor = new ProtoDocumentEditor(protoDocument2);
             let fields = editor.getMessageTopLevelFields("outer");
